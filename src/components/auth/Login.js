@@ -6,18 +6,9 @@ import {
   CardContent,
   Button,
   Typography,
-  Divider,
   Container,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
   Alert,
   Grid,
-  Paper,
-  Chip,
-  Collapse,
-  IconButton,
   useTheme,
   useMediaQuery,
   Fade,
@@ -26,29 +17,14 @@ import {
 } from "@mui/material";
 import {
   Google,
-  ExpandMore,
-  ExpandLess,
   Factory,
   Dashboard,
   TrendingUp,
   Security,
-  Info,
 } from "@mui/icons-material";
 import { useAuth } from "../../context/AuthContext";
 import LoadingSpinner from "../common/LoadingSpinner";
 import { supabase } from "../../lib/supabaseClient";
-
-// Extracted role options for easier management and cleaner JSX
-const ROLE_OPTIONS = [
-  "CEO",
-  "Customer Relations Manager",
-  "Production Manager",
-  "Process Coordinator",
-  "QC Manager",
-  "NPD",
-  "Sales Executive",
-  "Store Manager"
-];
 
 const Login = () => {
   const theme = useTheme();
@@ -61,7 +37,6 @@ const Login = () => {
   
   // useAuth provides authentication methods and state
   const {
-    signInWithGoogle,
     loading: authLoading,
     isAuthenticated,
     error: authError,
@@ -69,7 +44,6 @@ const Login = () => {
   const navigate = useNavigate();
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [showMoreInfo, setShowMoreInfo] = useState(false);
   const [sessionExpiredMsg, setSessionExpiredMsg] = useState(null);
 
   // Check for session expiration message from URL
@@ -398,32 +372,6 @@ const Login = () => {
                       </Box>
                     </Slide>
 
-                    {/* OAuth Configuration Status */}
-                    {!config.useLocalStorage && (
-                      <Grow in timeout={1800}>
-                        <Alert 
-                          severity={validateOAuthConfig().isValid ? "success" : "warning"} 
-                          sx={{ mb: 3, borderRadius: 3 }}
-                        >
-                          <strong>OAuth Configuration Status:</strong>
-                          <br />
-                          {validateOAuthConfig().isValid ? (
-                            "✅ OAuth is properly configured and ready to use."
-                          ) : (
-                            <>
-                              ⚠️ OAuth configuration issues detected:
-                              <ul style={{ margin: '8px 0', paddingLeft: '20px' }}>
-                                {validateOAuthConfig().issues.map((issue, index) => (
-                                  <li key={index}>{issue}</li>
-                                ))}
-                              </ul>
-                              Redirect URI: <code>{validateOAuthConfig().redirectUri || 'Not configured'}</code>
-                            </>
-                          )}
-                        </Alert>
-                      </Grow>
-                    )}
-
                     {/* Session expired message */}
                     {sessionExpiredMsg && (
                       <Grow in timeout={200}>
@@ -497,222 +445,20 @@ const Login = () => {
                       </Button>
                     </Grow>
 
-                    {/* More Info Section */}
-                    {!config.useLocalStorage && (
-                      <Grow in timeout={2200}>
-                        <Box sx={{ mt: 4 }}>
-                          <Button
-                            fullWidth
-                            startIcon={<Info />}
-                            endIcon={showMoreInfo ? <ExpandLess /> : <ExpandMore />}
-                            onClick={() => setShowMoreInfo(!showMoreInfo)}
-                            sx={{
-                              textTransform: "none",
-                              color: "#6b7280",
-                              backgroundColor: "#f8fafc",
-                              borderRadius: 3,
-                              py: 2,
-                              border: "1px solid #e2e8f0",
-                              fontWeight: 500,
-                              transition: "all 0.3s ease",
-                              "&:hover": {
-                                backgroundColor: "#f1f5f9",
-                                borderColor: "#cbd5e1",
-                                transform: "translateY(-1px)",
-                              },
-                            }}
-                          >
-                            Sign in with Google
-                          </Button>
-                          
-                          <Collapse in={showMoreInfo}>
-                            <Alert 
-                              severity="info" 
-                              sx={{ 
-                                mt: 3, 
-                                borderRadius: 3,
-                                backgroundColor: "#eff6ff",
-                                border: "1px solid #bfdbfe",
-                                color: "#1e40af",
-                              }}
-                            >
-                              <Typography variant="body2">
-                                After signing in, you can access the app. Use <strong>Setup</strong> to initialize data tables if needed.
-                              </Typography>
-                            </Alert>
-                          </Collapse>
-                        </Box>
-                      </Grow>
-                    )}
-
-                    {/* Development Mode Section */}
-                    <Grow in timeout={2400}>
-                      <Box sx={{ mt: 5, mb: 4 }}>
-                        <Divider sx={{ mb: 4 }}>
-                          <Chip
-                            label="Development Mode"
-                            size="small"
-                            sx={{
-                              backgroundColor: "#f1f5f9",
-                              color: "#64748b",
-                              fontWeight: 600,
-                              fontSize: "0.8rem",
-                              px: 2,
-                              py: 0.5,
-                            }}
-                          />
-                        </Divider>
-
-                        {/* Mock login role selector */}
-                        <FormControl fullWidth sx={{ mb: 4 }}>
-                          <InputLabel id="role-select-label" sx={{ color: "#64748b", fontWeight: 500 }}>
-                            Select Role
-                          </InputLabel>
-                          <Select
-                            labelId="role-select-label"
-                            value={mockRole}
-                            label="Select Role"
-                            onChange={(e) => setMockRole(e.target.value)}
-                            sx={{
-                              borderRadius: 3,
-                              transition: "all 0.3s ease",
-                              "& .MuiOutlinedInput-notchedOutline": {
-                                borderColor: "#e2e8f0",
-                                borderWidth: "2px",
-                              },
-                              "&:hover .MuiOutlinedInput-notchedOutline": {
-                                borderColor: "#cbd5e1",
-                              },
-                              "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-                                borderColor: "#3b82f6",
-                                borderWidth: "2px",
-                              },
-                            }}
-                          >
-                            {ROLE_OPTIONS.map((role) => (
-                              <MenuItem key={role} value={role}>
-                                {role}
-                              </MenuItem>
-                            ))}
-                          </Select>
-                        </FormControl>
-
-                        {/* Mock login button */}
-                        <Button
-                          variant="outlined"
-                          fullWidth
-                          onClick={handleMockSignIn}
-                          size="large"
-                          sx={{
-                            py: 2.5,
-                            px: 4,
-                            borderRadius: 3,
-                            borderColor: "#3b82f6",
-                            color: "#3b82f6",
-                            textTransform: "none",
-                            fontSize: "1.1rem",
-                            fontWeight: 600,
-                            borderWidth: "2px",
-                            letterSpacing: "0.02em",
-                            transition: "all 0.3s ease",
-                            "&:hover": {
-                              backgroundColor: "#eff6ff",
-                              borderColor: "#2563eb",
-                              transform: "translateY(-2px) scale(1.02)",
-                              boxShadow: "0 8px 24px rgba(59, 130, 246, 0.2)",
-                            },
-                            "&:active": {
-                              transform: "translateY(0) scale(0.98)",
-                            },
-                          }}
-                        >
-                          Mock Login as {mockRole}
-                        </Button>
-
-                        {/* CEO Direct Login Button */}
-                        <Button
-                          variant="outlined"
-                          color="primary"
-                          fullWidth
-                          onClick={handleCEOLogin}
-                          size="large"
-                          sx={{
-                            py: 2.5,
-                            px: 4,
-                            mt: 3,
-                            borderRadius: 3,
-                            borderColor: "#10b981",
-                            color: "#10b981",
-                            textTransform: "none",
-                            fontSize: "1.1rem",
-                            fontWeight: 600,
-                            borderWidth: "2px",
-                            letterSpacing: "0.02em",
-                            transition: "all 0.3s ease",
-                            "&:hover": {
-                              backgroundColor: "#ecfdf5",
-                              borderColor: "#059669",
-                              transform: "translateY(-2px) scale(1.02)",
-                              boxShadow: "0 8px 24px rgba(16, 185, 129, 0.2)",
-                            },
-                            "&:active": {
-                              transform: "translateY(0) scale(0.98)",
-                            },
-                          }}
-                        >
-                          Direct Login as CEO (abhishek@reyanshelectronics.com)
-                        </Button>
-
-                        {/* Debug OAuth Button */}
-                        <Button
-                          variant="outlined"
-                          color="secondary"
-                          fullWidth
-                          onClick={() => {
-                            const debugInfo = debugOAuth();
-                            setError('Check browser console for OAuth debug information');
-                          }}
-                          size="large"
-                          sx={{
-                            py: 2.5,
-                            px: 4,
-                            mt: 3,
-                            borderRadius: 3,
-                            borderColor: "#8b5cf6",
-                            color: "#8b5cf6",
-                            textTransform: "none",
-                            fontSize: "1.1rem",
-                            fontWeight: 600,
-                            borderWidth: "2px",
-                            letterSpacing: "0.02em",
-                            transition: "all 0.3s ease",
-                            "&:hover": {
-                              backgroundColor: "#faf5ff",
-                              borderColor: "#7c3aed",
-                              transform: "translateY(-2px) scale(1.02)",
-                              boxShadow: "0 8px 24px rgba(139, 92, 246, 0.2)",
-                            },
-                            "&:active": {
-                              transform: "translateY(0) scale(0.98)",
-                            },
-                          }}
-                        >
-                          Debug OAuth Configuration
-                        </Button>
-
+                    {/* Additional info text */}
+                    <Grow in timeout={2200}>
+                      <Box sx={{ mt: 5, mb: 2 }}>
                         <Typography
                           variant="body2"
                           color="text.secondary"
                           sx={{
                             display: "block",
-                            mt: 3,
                             textAlign: "center",
                             lineHeight: 1.6,
                             px: 2,
                           }}
                         >
-                          This is a demonstration application. In a production environment, 
-                          only @reyanshelectronics.com email accounts would be authorized to sign in.
+                          Use your authorized Google account to sign in and access the Reyansh ERP dashboard.
                         </Typography>
                       </Box>
                     </Grow>
