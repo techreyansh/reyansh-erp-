@@ -1,7 +1,7 @@
 import { supabase } from '../lib/supabaseClient';
 
 export const getCurrentUser = async () => {
-  const { data, error } = await supabase.auth.getSession();
+  const { user, role } = useAuth();
   if (error || !data.session?.user) return null;
   return data.session.user;
 };
