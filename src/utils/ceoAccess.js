@@ -1,26 +1,20 @@
-import { supabase } from '../lib/supabaseClient';
+import { useAuth } from '../context/AuthContext';
 
-export const requireCEORole = async () => {
-  const { data, error } = await supabase.auth.getSession();
-  if (error || !data.session?.user?.id) {
+export const useRequireCEORole = () => {
+  const { user, role } = useAuth();
+
+  if (!user) {
     throw new Error('Access Denied – Not authenticated');
   }
-  const { data: row, error: dbError } = await supabase
-    .from('users')
-    .select('id, roles ( code )')
-    .eq('id', data.session.user.id)
-    .maybeSingle();
-  if (dbError || !row?.roles || row.roles.code !== 'CEO') {
+
+  if (role !== 'CEO') {
     throw new Error('Access Denied – Insufficient Privileges');
   }
+
   return true;
 };
 
-export const isCEORole = async () => {
-  try {
-    await requireCEORole();
-    return true;
-  } catch {
-    return false;
-  }
+export const useIsCEORole = () => {
+  const { role } = useAuth();
+  return role === 'CEO';
 };
