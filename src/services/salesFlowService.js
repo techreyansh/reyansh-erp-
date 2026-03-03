@@ -1,6 +1,5 @@
 import * as db from '../lib/db';
 import config from '../config/config';
-import { getUserRole } from '../utils/authUtils';
 import { getAllProductsFromClients } from './clientService';
 
 const SHEET_NAME = config.sheets.salesFlow;
@@ -2344,7 +2343,7 @@ const salesFlowService = {
   },
 
   // Get tasks assigned to a specific user
-  async getUserTasks(userEmail) {
+  async getUserTasks(userEmail, userRole) {
     try {
       const steps = await db.getTableRows(table(STEPS_SHEET));
       const flowData = await db.getTableRows(table(SHEET_NAME));
@@ -2358,7 +2357,7 @@ const salesFlowService = {
       // Tasks should show up until NextStep is -1 or empty
       const userSteps = steps.filter(step => {
         const isAssigned = step.AssignedTo === userEmail || 
-                          step.AssignedTo === getUserRole() ||
+                          step.AssignedTo === userRole ||
                           step.AssignedTo === 'Sales Executive'; // Temporary fix for role-based assignment
         
         // Task is not completed if NextStep is not -1 and not empty

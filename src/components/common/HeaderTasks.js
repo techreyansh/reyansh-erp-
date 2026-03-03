@@ -57,7 +57,6 @@ import {
   Dashboard
 } from '@mui/icons-material';
 import { useAuth } from '../../context/AuthContext';
-import { getUserRole } from '../../utils/authUtils';
 import flowService from '../../services/flowService';
 import purchaseFlowService from '../../services/purchaseFlowService';
 import salesFlowService from '../../services/salesFlowService';
@@ -67,7 +66,7 @@ import dashboardService from '../../services/dashboardService';
 import config from '../../config/config';
 
 const HeaderTasks = () => {
-  const { user } = useAuth();
+  const { user, role: userRole } = useAuth();
   const navigate = useNavigate();
   const [anchorEl, setAnchorEl] = useState(null);
   const [tasksOpen, setTasksOpen] = useState(false);
@@ -83,8 +82,6 @@ const HeaderTasks = () => {
   const [todaysTasks, setTodaysTasks] = useState([]);
   const [activeTab, setActiveTab] = useState(0);
   const [error, setError] = useState(null);
-
-  const userRole = getUserRole();
 
   useEffect(() => {
     if (user && tasksOpen) {
@@ -121,10 +118,9 @@ const HeaderTasks = () => {
       }
 
       // Fetch Sales Flow tasks
-
       if (['Sales Executive', 'Customer Relations Manager', 'Director'].includes(userRole)) {
         promises.push(
-          salesFlowService.getUserTasks(user.email).catch((error) => {
+          salesFlowService.getUserTasks(user.email, userRole).catch((error) => {
             console.error('❌ Error fetching sales tasks:', error);
             return [];
           })

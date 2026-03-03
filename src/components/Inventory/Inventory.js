@@ -42,7 +42,7 @@ import FinishedGoodsMaster from "../FinishedGoods/FinishedGoodsMaster";
 import CompanyBillOfMaterials from "../BillOfMaterials/CompanyBillOfMaterials";
 import CompanyKittingSheet from "../KittingSheet/CompanyKittingSheet";
 import FGInventory from "./FinishedGoodsMaster";
-import { getUserRole } from "../../utils/authUtils";
+import { useAuth } from "../../context/AuthContext";
 import { useLocation } from "react-router-dom";
 import FGStockSheet from "./FGStockSheet";
 
@@ -52,7 +52,7 @@ const Inventory = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const isTablet = useMediaQuery(theme.breakpoints.between('md', 'lg'));
-  const userRole = getUserRole();
+  const { role: userRole } = useAuth();
   const location = useLocation();
 
   // Enhanced tab configuration with icons and descriptions

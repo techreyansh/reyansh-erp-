@@ -48,7 +48,7 @@ import poService from '../../services/poService';
 import { getAllClients } from '../../services/clientService';
 import sheetService from '../../services/sheetService';
 import config from '../../config/config';
-import { getCurrentUser } from '../../utils/authUtils';
+import { useAuth } from '../../context/AuthContext';
 
 const orderTypes = [
   'CABLE_ONLY',
@@ -57,6 +57,7 @@ const orderTypes = [
 
 const SalesOrderEditForm = ({ open, onClose, salesOrder, onSave }) => {
   const theme = useTheme();
+  const { user } = useAuth();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(false);
@@ -358,7 +359,6 @@ const SalesOrderEditForm = ({ open, onClose, salesOrder, onSave }) => {
           await poService.updatePOByUniqueId(item.uniqueId, updateData);
         } else {
           // Create new item row for this sales order
-          const currentUser = getCurrentUser();
           const now = new Date().toISOString();
           
           const newItem = {
@@ -367,7 +367,7 @@ const SalesOrderEditForm = ({ open, onClose, salesOrder, onSave }) => {
             POId: formData.poNumber,
             ...updateData,
             Status: salesOrder.Status || config.statusCodes.NEW,
-            CreatedBy: currentUser.email,
+            CreatedBy: user?.email || 'system',
             CreatedAt: now,
             UpdatedAt: now,
             PODocumentId: salesOrder.PODocumentId || '',

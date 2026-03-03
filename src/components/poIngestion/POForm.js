@@ -358,7 +358,7 @@ const SalesOrderForm = ({ onSalesOrderCreated }) => {
         items: itemsWithSOId, // Items now include SOId
         poDocumentId
       };
-      await poService.createPO(payload);
+      await poService.createPO(payload, user?.email || 'system');
       
       // Update sales flow step if this was created from sales flow data
       if (salesFlowForSO) {

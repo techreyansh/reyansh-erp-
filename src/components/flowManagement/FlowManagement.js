@@ -85,7 +85,7 @@ import flowService from "../../services/flowService";
 import config from "../../config/config";
 import sheetService from "../../services/sheetService";
 import dispatchService from "../../services/dispatchService";
-import { getCurrentUser } from "../../utils/authUtils";
+import { useAuth } from "../../context/AuthContext";
 import { getNextStatus } from "../../utils/statusUtils";
 import { subtractWorkingDays } from "../../utils/dateRestrictions";
 import { getAllClients } from "../../services/clientService";
@@ -259,6 +259,7 @@ const checkPreviousStagesCompletedForUpdate = (dispatchRecord, currentStageName)
 
 const FlowManagement = () => {
   const theme = useTheme();
+  const { user } = useAuth();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [tasks, setTasks] = useState([]);
@@ -433,7 +434,7 @@ const FlowManagement = () => {
       }
 
       // Advance the task
-      const updatedTask = await flowService.advanceTask(task.POId);
+      const updatedTask = await flowService.advanceTask(task.POId, user?.email || '');
 
       // Show success message
       setSuccessMessage(`SO ${task.SOId || task.POId} (${task.UniqueId}) advanced successfully to ${updatedTask.Status}`);
@@ -466,7 +467,8 @@ const FlowManagement = () => {
       const updatedTask = await flowService.scheduleDispatchAndStartProduction(
         task.POId,
         dispatchDate,
-        calculatedDueDates
+        calculatedDueDates,
+        user?.email || ''
       );
 
       // Show success message with dispatch date
@@ -1105,7 +1107,7 @@ const FlowManagement = () => {
         fileName: file.name,         // File name
         mimeType: file.type,         // File type
         size: file.size,             // File size in bytes
-        uploadedBy: getCurrentUser().email,  // User who uploaded
+        uploadedBy: user?.email || 'system',  // User who uploaded
         uploadedAt: new Date().toISOString() // Upload timestamp
       };
 
@@ -2743,7 +2745,7 @@ const FlowManagement = () => {
                   <FlowVisualization
                     tasks={tasks}
                     onTaskAction={handleAdvanceTask}
-                    currentUser={getCurrentUser()}
+                    currentUser={user}
                   />
                 )} */}
                 

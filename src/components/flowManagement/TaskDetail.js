@@ -48,7 +48,7 @@ import {
 import StatusBadge from '../common/StatusBadge';
 import { formatDate, formatDateTime, isOverdue } from '../../utils/dateUtils';
 import { canAdvance } from '../../utils/statusUtils';
-import { getCurrentUser } from '../../utils/authUtils';
+import { useAuth } from '../../context/AuthContext';
 import CableProductionTaskDetail from './CableProductionTaskDetail';
 import FlowNavigation from './FlowNavigation';
 import config from '../../config/config';
@@ -62,8 +62,7 @@ const TaskDetail = ({ task, open, onClose, onAdvance, auditLog = [] }) => {
   const [file, setFile] = useState(null);
   const [sheetData, setSheetData] = useState(null);
   const [loadingSheetData, setLoadingSheetData] = useState(false);
-  
-  const currentUser = getCurrentUser();
+  const { user: currentUser } = useAuth();
 
   // Fetch data from Google Sheets when task is opened
   useEffect(() => {

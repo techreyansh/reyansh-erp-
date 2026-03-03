@@ -1,7 +1,6 @@
 import * as db from '../lib/db';
 import { supabase } from '../lib/supabaseClient';
 import config from '../config/config';
-import { getCurrentUser } from '../utils/authUtils';
 
 const PO_MASTER_TABLE = db.getTableName(config.sheets.poMaster);
 
@@ -28,9 +27,8 @@ class POService {
   }
   
   // Create a new PO
-  async createPO(poData) {
+  async createPO(poData, createdByEmail) {
     try {
-      const currentUser = getCurrentUser();
       const now = new Date().toISOString();
 
       // For each item, add a row to PO_Master
@@ -50,7 +48,7 @@ class POService {
             BatchSize: item.batchSize,
             Price: item.price || '', // Price per unit
             Status: config.statusCodes.NEW,
-            CreatedBy: currentUser.email,
+            CreatedBy: createdByEmail || '',
             CreatedAt: now,
             UpdatedAt: now,
             AssignedTo: poData.assignedTo || '',

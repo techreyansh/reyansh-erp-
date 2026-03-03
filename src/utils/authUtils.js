@@ -1,21 +1,12 @@
-import { useAuth } from '../context/AuthContext';
+// Legacy auth helper shims kept only to avoid build-time import errors.
+// New code should always use useAuth() from AuthContext instead.
 
-export const useCurrentUser = () => {
-  const { user } = useAuth();
-  return user || null;
-};
+export const getCurrentUser = () => null;
 
-export const useIsAuthenticated = () => {
-  const { user } = useAuth();
-  return !!user;
-};
+export const isAuthenticated = () => false;
 
-export const useUserRole = () => {
-  const { role } = useAuth();
-  return role;
-};
+export const getUserRole = () => null;
 
-export const useHasRole = (requiredRole) => {
-  const { role } = useAuth();
-  return role === requiredRole;
-};
+export const hasRole = () => false;
+
+export const hasPermission = () => false;

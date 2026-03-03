@@ -61,13 +61,12 @@ import {
   Security as SecurityIcon,
 } from "@mui/icons-material";
 import { useAuth } from "../../context/AuthContext";
-import { getUserRole } from "../../utils/authUtils";
 import config from "../../config/config";
 import HeaderTasks from "./HeaderTasks";
 
 const Header = () => {
   const theme = useTheme();
-  const { user, signOut } = useAuth();
+  const { user, signOut, role: userRole } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
   const isMobile = useMediaQuery("(max-width:1024px)");
@@ -131,7 +130,6 @@ const Header = () => {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, []);
 
-  const userRole = getUserRole();
   const isCEO = (userRole || '').toUpperCase() === 'CEO';
 
   /**

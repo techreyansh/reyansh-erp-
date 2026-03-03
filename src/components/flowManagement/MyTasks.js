@@ -20,6 +20,7 @@ import ErrorMessage from '../common/ErrorMessage';
 import flowService from '../../services/flowService';
 import poService from '../../services/poService';
 import { useAuth } from '../../context/AuthContext';
+import { useAuth } from '../../context/AuthContext';
 
 const MyTasks = () => {
   const { user } = useAuth();
@@ -27,6 +28,7 @@ const MyTasks = () => {
   const [tasks, setTasks] = useState([]);
   const [selectedTask, setSelectedTask] = useState(null);
   const [detailOpen, setDetailOpen] = useState(false);
+  const { user } = useAuth();
   const [error, setError] = useState(null);
   const [auditLog, setAuditLog] = useState([]);
   const [successMessage, setSuccessMessage] = useState('');
@@ -85,7 +87,7 @@ const MyTasks = () => {
       }
       
       // Advance the task
-      const updatedTask = await flowService.advanceTask(task.POId);
+      const updatedTask = await flowService.advanceTask(task.POId, user?.email || '');
       
       // Show success message
       setSuccessMessage(`Task ${task.POId} advanced successfully to ${updatedTask.Status}`);

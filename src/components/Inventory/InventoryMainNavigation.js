@@ -42,14 +42,14 @@ import {
   AccessTime as TimeIcon,
   AllInclusive as AllIcon
 } from "@mui/icons-material";
-import { getUserRole } from "../../utils/authUtils";
+import { useAuth } from "../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import sheetService from "../../services/sheetService";
 
 const InventoryMainNavigation = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
-  const userRole = getUserRole();
+  const { role: userRole } = useAuth();
   const navigate = useNavigate();
   
   // Statistics state

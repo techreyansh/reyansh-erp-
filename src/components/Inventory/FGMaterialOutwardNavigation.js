@@ -30,14 +30,14 @@ import {
   Home as HomeIcon
 } from "@mui/icons-material";
 import FGMaterialOutward from "./FGMaterialOutward";
-import { getUserRole } from "../../utils/authUtils";
+import { useAuth } from "../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 
 const FGMaterialOutwardNavigation = () => {
   const [selectedTab, setSelectedTab] = useState(0);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
-  const userRole = getUserRole();
+  const { role: userRole } = useAuth();
   const navigate = useNavigate();
 
   const tabs = [

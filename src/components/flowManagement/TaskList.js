@@ -65,7 +65,7 @@ import { Link } from 'react-router-dom';
 import StatusBadge from '../common/StatusBadge';
 import { formatDate, isOverdue } from '../../utils/dateUtils';
 import { canAdvance } from '../../utils/statusUtils';
-import { getCurrentUser } from '../../utils/authUtils';
+import { useAuth } from '../../context/AuthContext';
 import { formatCompletionDate, getStatusOnly } from '../../utils/statusDateUtils';
 import QuickActionButton from './QuickActionButton';
 import ReceivingDocumentActions from './ReceivingDocumentActions';
@@ -203,6 +203,7 @@ const checkPreviousStageCompletedForMove = (task, currentStage) => {
 
 const TaskList = ({ tasks, onAdvanceTask, onEditStageDate, onMoveToModule, onUpdateStatus, onMoveStage, onUploadReceivingDocument, onUpdateBatchSize, onDeleteTask, currentStage, title = "Tasks", timeRange, onTimeRangeChange, getTimeRangeLabel }) => {
   const theme = useTheme();
+  const { user: currentUser } = useAuth();
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [searchQuery, setSearchQuery] = useState('');
@@ -725,8 +726,6 @@ const TaskList = ({ tasks, onAdvanceTask, onEditStageDate, onMoveToModule, onUpd
     page * rowsPerPage,
     page * rowsPerPage + rowsPerPage
   );
-
-  const currentUser = getCurrentUser();
 
   // Check if current stage allows date editing
   const canEditStageDate = (status) => {

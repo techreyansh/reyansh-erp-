@@ -5,7 +5,6 @@
  */
 
 import * as db from '../lib/db';
-import { getCurrentUser } from '../utils/authUtils';
 
 const WHATSAPP_LOGS_TABLE = 'whatsapp_logs';
 
@@ -18,9 +17,8 @@ class WhatsAppLogService {
   /**
    * Log a WhatsApp message draft
    */
-  async logMessageDraft(orderId, clientCode, workflowStage, status, messageDraft, recipients, messageSent = false) {
+  async logMessageDraft(orderId, clientCode, workflowStage, status, messageDraft, recipients, messageSent = false, userEmail = 'Unknown') {
     try {
-      const currentUser = getCurrentUser();
       const timestamp = new Date().toISOString();
 
       const logEntry = {
@@ -31,7 +29,7 @@ class WhatsAppLogService {
         Status: status || '',
         MessageDraft: messageDraft || '',
         Recipients: JSON.stringify(recipients || []),
-        UserEmail: currentUser?.email || 'Unknown',
+        UserEmail: userEmail || 'Unknown',
         MessageSent: messageSent ? 'Yes' : 'No'
       };
 

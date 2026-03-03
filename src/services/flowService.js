@@ -1,7 +1,6 @@
 import * as db from '../lib/db';
 import poService from './poService';
 import config from '../config/config';
-import { getCurrentUser } from '../utils/authUtils';
 import { calculateStageDueDates } from '../utils/backwardPlanning';
 import { addWorkingDays } from '../utils/dateRestrictions';
 
@@ -29,7 +28,7 @@ class FlowService {
   }
   
   // Advance a PO to the next stage
-  async advanceTask(poId) {
+  async advanceTask(poId, currentUserEmail) {
     try {
       const po = await poService.getPOById(poId);
       
@@ -37,8 +36,7 @@ class FlowService {
         throw new Error(`PO with ID ${poId} not found`);
       }
       
-      const currentUser = getCurrentUser();
-      if (po.AssignedTo !== currentUser.email) {
+      if (po.AssignedTo !== currentUserEmail) {
         throw new Error('You are not authorized to perform this action on this task.');
       }
       
@@ -140,7 +138,7 @@ class FlowService {
         poId,
         currentStatus,
         nextStatus,
-        currentUser.email,
+        currentUserEmail,
         'ADVANCE'
       );
       
@@ -169,7 +167,7 @@ class FlowService {
   }
 
   // Schedule dispatch and start production (NEW -> STORE1)
-  async scheduleDispatchAndStartProduction(poId, dispatchDate, calculatedDueDates) {
+  async scheduleDispatchAndStartProduction(poId, dispatchDate, calculatedDueDates, currentUserEmail) {
     try {
       const po = await poService.getPOById(poId);
       
@@ -177,8 +175,7 @@ class FlowService {
         throw new Error(`PO with ID ${poId} not found`);
       }
       
-      const currentUser = getCurrentUser();
-      if (po.AssignedTo !== currentUser.email) {
+      if (po.AssignedTo !== currentUserEmail) {
         throw new Error('You are not authorized to perform this action on this task.');
       }
       
@@ -215,7 +212,7 @@ class FlowService {
         poId,
         currentStatus,
         nextStatus,
-        currentUser.email,
+        currentUserEmail,
         'SCHEDULE_DISPATCH',
         `Dispatch scheduled for ${new Date(dispatchDate).toLocaleDateString()} - Production started`
       );

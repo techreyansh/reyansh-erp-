@@ -190,7 +190,8 @@ Reyansh Industries`);
         status,
         message,
         recipients,
-        true // Message sent
+        true, // Message sent
+        user?.email || 'Unknown'
       );
 
       if (onMessageSent) {
@@ -227,7 +228,8 @@ Reyansh Industries`);
         status,
         message,
         recipients,
-        true // Message sent
+        true, // Message sent
+        user?.email || 'Unknown'
       );
 
       if (onMessageSent) {
